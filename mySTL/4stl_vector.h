@@ -95,7 +95,7 @@ namespace lfp {
 		size_type size() const { return finish - start; }
 		size_type capacity() const { return end_of_storage - start; }
 		reference operator[](size_type n) { return *(start + n); }
-		const_reference operator[](size_type n) const { return *(start + n); }
+		const_reference operator[](size_type n) const { return *(start + n); } // typedef  size_t  size_type;
 		reference front() { return *begin(); }
 		const_reference front() const { return *begin(); }
 		reference back() { return *(end() - 1); }
@@ -121,7 +121,7 @@ namespace lfp {
 				++finish;
 			}
 			else {
-				insert_aux(end(), 1, x);		//扩充空间并插入元素
+				insert_aux(end(), 1, x);		//扩充空间并插入元素 且这里只插入了一个元素，由于vector不是使用list方式，是直接申请了一串内存单元，直接用*(start+n)访问，而不是使用迭代器，所以当增加的元素很多超过备用元素时，需要重新申请大片空间，之后将所有元素copy进去
 			}
 		}
 
@@ -279,7 +279,7 @@ namespace lfp {
 		if (n > 0)
 		{
 			if (size_type(end_of_storage - finish) >= n) {
-				//备用空间大于等于新增元素个数
+				//备用空间大于等于新增元素个数,调用T构造函数且该构造不能使用explict定义构造函数，否则需要使用 T x_copy(x);
 				T x_copy = x;
 				
 				//以下计算插入点之后的现有元素个数

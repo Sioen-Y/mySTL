@@ -11,3 +11,10 @@ void operator delete(void* ptr){
 	cout<<"delete operator overloaded"
 	free(ptr);
 }
+
+// placement new允许在一个已经分配的内存资源上构造对象
+    Complex* pc = new Complex(4.2, 5.3); 
+	Complex* pd = new Complex[2]; 
+	
+// using placement new 
+    Complex *pe = new (buf) Complex(2.6, 3.9); 

@@ -10,19 +10,19 @@
 #include "1stl_type_traits.h"	//for __type_traits
 #include <string.h>				//for memmove
 
-namespace lfp {		//这一级namespace下是外部用户使用的标注接口
+namespace lfp {		//这一级namespace下是外部用户使用的标注接口a
 
 /* fill: 将[first, last) 内的所有位置填充为value */
 	template<class ForwardIterator, class T>
 	inline void fill(ForwardIterator first, ForwardIterator last, const T& value) {
 		for (; first != last; ++first) {
-			*first = value;
+			*first = value; //  
 		}
 	}
 
 /* fill_n: 将从first开始的n个位置填充为value，返回最后一个填充元素的下一位置 */
 	template<class OutputIterator, class Size, class T>
-	inline OutputIterator fill_n(OutputIterator first, Size n, const T& value) {
+	inline OutputIterator fill_n(OutputIterator first, Size n, const T& value) { //将该内存空间解释为对应的iterator并向其填值，比如vector<int>
 		for (; n > 0; --n, ++first) {
 			*first = value;
 		}
@@ -44,12 +44,11 @@ namespace lfp {		//这一级namespace下是外部用户使用的标注接口
 /* swap */
 	template<class T>
 	void swap(T& lhs, T& rhs) {
-		T tmp = lhs;
-		lhs = rhs;
+		T tmp = lhs; // 浅拷贝还是深拷贝取决于类T是否写了自己的构造函数（带new）  T(const T& rhl){this->x=rhl.x; this->y=rhl.y;}
 		rhs = tmp;
 	}
 
-/* find */
+/* find : 寻找第一个元素值等于value的地址*/
 	template<class InputIterator, class T>
 	inline InputIterator find(InputIterator first, InputIterator last, const T& value) {
 		while (first != last && *first != value)

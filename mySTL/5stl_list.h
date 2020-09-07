@@ -26,7 +26,7 @@ namespace detail {
 	};
 
 /* 以下是list迭代器设计，型别为双向迭代器 */
-	template<class T, class Ref = T&, class Ptr = T*>
+	template<class T, class Ref = T&, class Ptr = T*> // 设置Ref和Ptr默认值
 	struct __list_iterator {
 	public:
 		typedef __list_iterator<T, Ref, Ptr>		self;
@@ -48,16 +48,16 @@ namespace detail {
 		__list_iterator() { }
 		__list_iterator(node_pointer x) : node(x) { }
 		__list_iterator(const iterator& x) : node(x.node) { }
-
-		bool operator==(const self& x) const { return node == x.node; }
-		bool operator!=(const self& x) const { return node != x.node; }
+		/* 比较类型为__list_iterator<T,Ref,Ptr>的两个变量是否相等，即比较两者内部node节点地址是否相等*/
+		bool operator==(const self& x) const { return node == x.node; } // 这里x类型是 __list_iterator<T,Ref,Ptr>
+		bool operator!=(const self& x) const { return node != x.node; } // data数据类型为T
 		//以下对迭代器取值，取的是节点的数值
 		reference operator*() const { return (*node).data; }
 		//以下是迭代器的成员存取运算子的标准做法
-		pointer operator->() const { return &(operator*()); }		//先用*运算符取得node的内容，再用&取得地址
-		//对迭代器加1就是前进一个节点
+		pointer operator->() const { return &(operator*()); }		// 返回__list_iterator中节点数据的地址，即&data
+		//对迭代器加1就是前进一个节点，节点地址
 		self& operator++() {	//前置++
-			node = (*node).next;
+			node = (*node).next;// node = node->next;
 			return *this;
 		}
 		self operator++(int) {	//后置++
@@ -106,16 +106,16 @@ namespace detail {
 		/* 只需要一个指针即可实现双向循环链表。为了实现标准的前闭后开	*/
 		/* 区间表示法，node 指向尾端后面的一个空白节点，便于其他操作	*/
 
-		//专属空间配置器，每次配置一个节点大小
+		//专属空间配置器，每次配置一个节点大小，侯捷推荐的某个版本中的allocate一次申请连续的多个内存空间
 		typedef simple_alloc<node_type, Alloc> node_type_allocator;
 	
 		/* 以下函数分别用来配置、释放、构造、销毁一个节点配置一个节点并传回 */
-		node_pointer get_node() { return node_type_allocator::allocate(); }
+		node_pointer get_node() { return node_type_allocator::allocate(); } // simple_alloc<node_type,Alloc>::allocate()
 		//释放一个节点
 		void put_node(node_pointer p) { node_type_allocator::deallocate(p); }
 		//配置并构造一个节点
 		node_pointer create_node(const T& x) {
-			node_pointer p = get_node();
+			node_pointer p = get_node();// 申请一个内存空间
 			construct(&p->data, x);		//在 p 的 data 成员的地址处构造一个对象
 			return p;
 		}
@@ -149,8 +149,8 @@ namespace detail {
 		}
 
 		//这里会构造一个iterator对象
-		iterator begin() { return (*node).next; }
-		const_iterator begin() const { return (*node).next; }
+		iterator begin() { return (*node).next; } // begin()是list的函数，list中的node是头节点指针，内部不存放任何元素，从head->next开始才存放数据
+		const_iterator begin() const { return (*node).next; }// 后一个const表示不修改成员变量
 		iterator end() { return node; }
 		const_iterator end() const { return node; }
 		bool empty() const { return node->next == node;	}
@@ -167,10 +167,10 @@ namespace detail {
 		//移除迭代器pos所指结点，返回移除后该位置的迭代器
 		iterator erase(iterator pos);
 
-		void push_front(const T& x) { insert(begin(), x); }
-		void push_back(const T& x) { insert(end(), x); }
+		void push_front(const T& x) { insert(begin(), x); } // insert(begin(),x):  create_node(x)->next = begin.node; create_node(x)->prev =begin.node->prev; create_node(x)会在begin()前面，而begin()是头结点(空节点)的下一个节点，所以该操作实际是创建一个新的节点并插入到头结点后面
+		void push_back(const T& x) { insert(end(), x); } //创建一个新的节点(x)并插入到头节点(空节点)前面，这里的list是一个双向循环链表，头结点也是尾结点
 		void pop_front() { erase(begin()); }
-		void pop_back() { erase(--end()); }
+		void pop_back() { erase(--end()); }//由于这里的双向循环链表里end()是头结点即空节点，所以erase操作针对的是end()前一个内存区域
 
 		//清空整个链表
 		void clear();
@@ -179,7 +179,8 @@ namespace detail {
 		//移除数值相同的连续元素为只剩一个
 		void unique();
 		
-		//将 x 接合于 pos 所指位置，x 必须不同于 *this
+		// splice实现了函数重构
+		//将 x 接合于 pos 所指位置，x 必须不同于 *this，*this的list是自身链表，x是另外一个链表
 		void splice(iterator pos, list& x);
 		//将 i 所指的元素接合于 pos 所指位置，pos 和 i 可以指向同一个 list 
 		void splice(iterator pos, iterator i);
@@ -199,9 +200,9 @@ namespace detail {
 
 
 
-	//在迭代器pos所指位置插入一个节点，返回插入后该位置的迭代器
+	//在迭代器pos所指位置插入一个节点，返回插入后该位置的迭代器，该插入的节点位于pos前面
 	template<class T, class Alloc>
-	typename list<T, Alloc>::iterator
+	typename list<T, Alloc>::iterator //这里typename指定::iterator是list中的一个别名而不是成员变量，同时list<T, Alloc>::iterator也是成员函数list<T, Alloc>::insert()的返回值
 		list<T, Alloc>::insert(iterator pos, const T& x) {
 		node_pointer tmp = create_node(x);
 
@@ -216,12 +217,12 @@ namespace detail {
 
 	//移除迭代器pos所指结点，返回移除后该位置的迭代器
 	template<class T, class Alloc>
-	typename list<T, Alloc>::iterator
+	typename list<T, Alloc>::iterator // typename用于说明这里的iterator是list的一个类型而不是类成员(list 内部 typedef typename detail::__list_iterator<T, T&, T*>::iterator			iterator;)
 		list<T, Alloc>::erase(iterator pos) {
 		node_pointer next_node = pos.node->next;
 		node_pointer prev_node = pos.node->prev;
-		prev_node->next = next_node;
-		next_node->prev = prev_node;
+		prev_node->next = next_node; // pos.node->prev->next = pos.node->next 后继
+		next_node->prev = prev_node; // pos.node->next->prev = pos.node->prev 前驱
 		destroy_node(pos.node);
 		--size_;
 		return iterator(next_node);
@@ -230,13 +231,13 @@ namespace detail {
 	//清空整个链表
 	template<class T, class Alloc>
 	void list<T, Alloc>::clear() {
-		node_pointer cur = node->next;	//begin()
-		while (cur != node) {		//遍历每一个节点
+		node_pointer cur = node->next;	//begin() 头结点
+		while (cur != node) {		//遍历每一个节点, end() 尾结点
 			node_pointer tmp = cur;
 			cur = cur->next;
 			destroy_node(tmp);		//销毁节点
 		}
-		//将链表恢复到空链表状态
+		//将链表恢复到空链表状态，链表的节点指向自身
 		node->next = node;
 		node->prev = node;
 		size_ = 0;
@@ -245,12 +246,12 @@ namespace detail {
 	//将值为 value 的所有元素移除
 	template<class T, class Alloc>
 	void list<T, Alloc>::remove(const T& value) {
-		iterator first = begin();
-		iterator last = end();
+		iterator first = begin(); // node->next
+		iterator last = end(); // node
 		while (first != last)
 		{
 			if (*first == value) {
-				first = erase(first);
+				first = erase(first); // 删除对应的内存空间
 				continue;
 			}
 			++first;

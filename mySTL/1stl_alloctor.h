@@ -339,18 +339,18 @@ namespace detail {		//第二级namespace是stl内部使用的实现细节（后�
 	template<typename T, class Alloc>
 	class simple_alloc {
 	public:
-		static T* allocate(size_t n) {
+		static T* allocate(size_t n) {// 静态函数，可以访问类中静态成员且不需要隐含的this指针直接使用该函数
 			return 0 == n ? 0 : (T*)Alloc::allocate(n * sizeof(T));
 		}
-		static T* allocate(void) {
+		static T* allocate(void) {//默认分配一个类型为T对应的内存单元
 			return (T*)Alloc::allocate(sizeof(T));
 		}
-		static void deallocate(T* p, size_t n) {
+		static void deallocate(T* p, size_t n) {//参数n在函数内并不会被使用
 			if (0 != n)
 				Alloc::deallocate(p, n * sizeof(T));
 		}
 		static void deallocate(T* p) {
-			Alloc::deallocate(p, sizeof(T));
+			Alloc::deallocate(p, sizeof(T));//实际还是调用free(p)
 		}
 	};
 
