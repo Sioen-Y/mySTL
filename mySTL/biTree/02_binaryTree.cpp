@@ -115,23 +115,24 @@ void CBinarySearchTree<T>::remove(const T& x)
 }
 
 template <class T>
-void CBinarySearchTree<T>::remove(const T& x, BinaryNode<T>* &t)
-{
+void CBinarySearchTree<T>::remove(const T& x, BinaryNode<T>* &t) // 这里是BinaryNode<T>*的引用，并不会生成临时变量，同时该函数也不会修改t的值，t是头结点
+{	//递归方法
     if (t == NULL)
         return;
-    if (x < t->value)
+    if (x < t->value) // 当
         remove(x, t->left);
     else if (x > t->element)
         remove (x, t->right);
-    else // now ==
+    else // now == 需要删除头结点，此时需要寻找左子树中最大的值作为新的头结点，或者寻找右子树中最小的值为最为新的头节点
+		 // 但是左子树最大的值深度浅，不太可能是叶子节点，而右子树最小值必是叶子节点，因此使用右子树最小值作为新头结点
     {
         if (t->left != NULL &&
-            t->right != NULL)//two child
+            t->right != NULL)//two child，头结点拥有左子树和右子树
         {
             t->value = find_min(t->right)->value;
             remove(t->value, t->right);
         }
-        else
+        else//只有左子树或者只有右子树
         {
             BinaryNode<T> *oldNode = t;
             t = (t->left != NULL) ? t->left : t->right;
