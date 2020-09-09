@@ -1,7 +1,7 @@
 #include"stdaxf.h"
 #include<iomanip>
-//Êı¾İ½ÚµãBinaryNode£¬²¢Ã»ÓĞ¸¸½Úµã£¬ËùÒÔÕâÀïµÄ²Ù×÷ÊµÏÖ»áÓë¡¶Êı¾İµ¼ÂÛ¡·ÉÏµÄÎ±´úÂë²»Ò»ÖÂ
-//Ã»ÓĞ¶¨Òå¸¸½ÚµãµÄ»°£¬Ç°ÇıÔªËØºÍºóÇıÔªËØ²»ºÃÕÒ£¬ÕâÀï¾Í²»¶¨Òå¸Ã·½·¨ÁË
+// æ•°æ®èŠ‚ç‚¹BinaryNodeï¼Œå¹¶æ²¡æœ‰çˆ¶èŠ‚ç‚¹ï¼Œæ‰€ä»¥è¿™é‡Œçš„æ“ä½œå®ç°ä¼šä¸ã€Šæ•°æ®å¯¼è®ºã€‹ä¸Šçš„ä¼ªä»£ç ä¸ä¸€è‡´
+// æ²¡æœ‰å®šä¹‰çˆ¶èŠ‚ç‚¹çš„è¯ï¼Œå‰é©±å…ƒç´ å’Œåé©±å…ƒç´ ä¸å¥½æ‰¾ï¼Œè¿™é‡Œå°±ä¸å®šä¹‰è¯¥æ–¹æ³•äº†
 template <class T>
 struct BinaryNode
 {
@@ -30,7 +30,7 @@ public:
     const T& findmax() ;
     const T& findmin() ;
     BinaryNode<T>*& searchNode(const T&x) const;
-//ÒòÎªÊ÷µÄ·½·¨ÓÃµ½ÁËºÜ¶àµİ¹é£¬ ËùÒÔÕâÀïÎÒÃÇĞèÒªÉêÃ÷ÈçÏÂµÄË½ÓĞ³ÉÔ±º¯Êı
+
 private:
     void Insert(const T &val,BinaryNode<T>* &t);
     void make_empty(BinaryNode<T>* &t);
@@ -73,7 +73,7 @@ BinaryNode<T>* CBinarySearchTree<T>::find_max(BinaryNode<T>* &t) const
 {
     BinaryNode<T>* x=t;
     if(x==NULL)
-        return (BinaryNode<T>*)NULL; //Èç¹ûÒ»¿ªÊ¼¾ÍÎª¿ÕÊ÷?±ğÍüÁË
+        return (BinaryNode<T>*)NULL;  
     while(x->right)
         x=x->right;
     return x;
@@ -83,7 +83,7 @@ BinaryNode<T>* CBinarySearchTree<T>::find_min( BinaryNode<T>* &t) const
 {
     BinaryNode<T>* x=t;
     if(x==NULL)
-        return (BinaryNode<T>*)NULL; //Èç¹ûÒ»¿ªÊ¼¾ÍÎª¿ÕÊ÷?±ğÍüÁË
+        return (BinaryNode<T>*)NULL; 
     while(x->left)
         x=x->left;
     return x;
@@ -106,7 +106,7 @@ void CBinarySearchTree<T>::make_empty(BinaryNode<T>* &t)
      delete t;
 
     }
-    t=NULL; //Ã¿Ò»´ÎÉ¾³ı£¬±ğÍüÁËÖØÖÃ
+    t=NULL;  
 }
 template <class T>
 void CBinarySearchTree<T>::remove(const T& x)
@@ -115,24 +115,24 @@ void CBinarySearchTree<T>::remove(const T& x)
 }
 
 template <class T>
-void CBinarySearchTree<T>::remove(const T& x, BinaryNode<T>* &t) // ÕâÀïÊÇBinaryNode<T>*µÄÒıÓÃ£¬²¢²»»áÉú³ÉÁÙÊ±±äÁ¿£¬Í¬Ê±¸Ãº¯ÊıÒ²²»»áĞŞ¸ÄtµÄÖµ£¬tÊÇÍ·½áµã
-{	//µİ¹é·½·¨
+void CBinarySearchTree<T>::remove(const T& x, BinaryNode<T>* &t)   
+{	 
     if (t == NULL)
         return;
-    if (x < t->value) // µ±
+    if (x < t->value)  
         remove(x, t->left);
     else if (x > t->element)
         remove (x, t->right);
-    else // now == ĞèÒªÉ¾³ıÍ·½áµã£¬´ËÊ±ĞèÒªÑ°ÕÒ×ó×ÓÊ÷ÖĞ×î´óµÄÖµ×÷ÎªĞÂµÄÍ·½áµã£¬»òÕßÑ°ÕÒÓÒ×ÓÊ÷ÖĞ×îĞ¡µÄÖµÎª×îÎªĞÂµÄÍ·½Úµã
-		 // µ«ÊÇ×ó×ÓÊ÷×î´óµÄÖµÉî¶ÈÇ³£¬²»Ì«¿ÉÄÜÊÇÒ¶×Ó½Úµã£¬¶øÓÒ×ÓÊ÷×îĞ¡Öµ±ØÊÇÒ¶×Ó½Úµã£¬Òò´ËÊ¹ÓÃÓÒ×ÓÊ÷×îĞ¡Öµ×÷ÎªĞÂÍ·½áµã
+    else  
+		 
     {
         if (t->left != NULL &&
-            t->right != NULL)//two child£¬Í·½áµãÓµÓĞ×ó×ÓÊ÷ºÍÓÒ×ÓÊ÷
+            t->right != NULL) 
         {
             t->value = find_min(t->right)->value;
             remove(t->value, t->right);
         }
-        else//Ö»ÓĞ×ó×ÓÊ÷»òÕßÖ»ÓĞÓÒ×ÓÊ÷
+        else 
         {
             BinaryNode<T> *oldNode = t;
             t = (t->left != NULL) ? t->left : t->right;
@@ -150,13 +150,7 @@ BinaryNode<T>*& CBinarySearchTree<T>::search_node(const T&x,BinaryNode<T>* &t) c
     else
         return search_node(x,t->left);
 }
-/*
-  ¶ş²æÊ÷µÄ±éÀúÓĞÈıÖÖ£ºÇ°Ğò£¬ÖĞĞò£¬ºóĞò¡£
-
-        Ç°Ğò±éÀúµÄ¹æÂÉÊÇ£ºÊä³ö¸ù½áµã£¬Êä³ö×ó×ÓÊ÷£¬Êä³öÓÒ×ÓÊ÷£»
-        ÖĞĞò±éÀúµÄ¹æÂÉÊÇ£ºÊä³ö×ó×ÓÊ÷£¬Êä³ö¸ù½áµã£¬Êä³öÓÒ×ÓÊ÷£»
-        ºóĞò±éÀúµÄ¹æÂÉÊÇ£ºÊä³ö×ó×ÓÊ÷£¬Êä³öÓÒ×ÓÊ÷£¬Êä³ö¸ù½áµã£»
-*/
+ 
 template <class T>
  void CBinarySearchTree<T>::printTreeInPrev(BinaryNode<T>* t) const
 {
