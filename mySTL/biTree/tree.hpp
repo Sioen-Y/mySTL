@@ -41,10 +41,10 @@ class BSTree{//查找树
         //查找二叉树中键值为key的节点(非递归实现)
         BSTNode<T>* search_Iterative(T key){search_Iterative(mRoot,key)};
 
-        // 查找最小节点
-        T minimum(){minimum(mRoot)};
-        // 查找最大节点
-        T maximum(){maximum(mRoot)};
+        // 查找最小节点(树中最小的键值)
+        T minimum(){minimum(mRoot)->key};
+        // 查找最大节点(树中最大的键值)
+        T maximum(){maximum(mRoot)->key};
 
         // 找节点(x)的后继节点，即，查找二叉树中数据值大于该节点的最小节点
         BSTNode<T>* successor(BSTNode<T>* x);
@@ -95,7 +95,7 @@ private:
         BSTNode<T>* remove(BSTNode<T> *tree, BSTNode<T> *z);
 
         // 销毁二叉树
-        void destroy(BSTNode<T>* &tree);
+        void destroy(BSTNode<T>* &tree){destroy(mRoot)};
 
         // 打印二叉树
         void print(BSTNode<T> *tree, T key, int direction);
@@ -247,12 +247,32 @@ private:
         // 然后使用该最小值替换需要删除节点的值，然后在右子树中删除最小值节点
         template<class T>
         BSTNode<T>* BSTree<T>::remove(BSTNode<T> *tree, BSTNode<T> *z){ 
-          if(z==NULL)
+          if(z == NULL)
           return;
-          if(z->left==NULL && z->right==NULL)// 没有任何子节点
-          delete(z);
-          if(z->left==NULL || z->right!=NULL) //只有右子树或只有左子树
-          z->parent->left = (z->left)?z->left:z->right;
+          if(z->key < tree->key)
+          //到左子树中删除
+            tree->left = remove(tree->left,z);
+          else if(z->key > tree->key)
+          //到右子树中删除
+            tree->right = remove(tree->right,z);
+          else
+          {//此时需要删除的是根节点
+           //如果该根节点只有左子树或右子树
+           if(tree->left == NULL || tree->right ==NULL)
+                BSTNode<T>* temp_node = tree;
+                tree = (tree->left != NULL)? tree->left: tree->right;
+                delete(temp_node);
+                return tree;
+          }
+          else // tree->left != NULL && tree->right !=NULL
+          {
+            //找到右子树中的最小值作为新搜索树的头结点的值
+             BSTNode<T>* temp_node = minimum(tree->right);
+            // tree->key = temp_node->key;
+            // delete(temp_node);
+             remove(tree->right,temp_node->key);
+
+          }
         }
 
         // 销毁二叉树
@@ -270,4 +290,25 @@ private:
             if(tree->right!=NULL)
             return destroy(tree->right);
 
+        }
+
+        /*
+        direction  --0,表示该节点为根节点
+                   --1,表示该节点是其父节点的左孩子
+                   --2,表示该节点是其父节点的右孩子
+        */
+
+        template<class T>
+        void BSTree<T>::print(BSTNode<T>* tree, T key, int direction){
+            if(tree != NULL)
+            {
+                if(direction==0) // tree是根节点
+                 cout << setw(2) << tree->key << " is root" << endl;
+                else
+                    cout << setw(2) << tree->key << " is " << setw(2) << key << "'s "  << setw(12) << (direction==1?"right child" : "left child") << endl;
+                
+                print(tree->left,tree->key,-1);
+                print(tree->right,tree->key,1);
+
+            }
         }

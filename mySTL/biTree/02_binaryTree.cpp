@@ -129,6 +129,7 @@ void CBinarySearchTree<T>::remove(const T& x, BinaryNode<T>* &t)
         if (t->left != NULL &&
             t->right != NULL) 
         {
+            // 这种做法实际上是将根节点键值替换为右子树最小值，之后删除右子树最小值的叶子节点,实际并没有删除根节点的内存空间
             t->value = find_min(t->right)->value;
             remove(t->value, t->right);
         }
