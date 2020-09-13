@@ -1,6 +1,12 @@
 {
     "files.associations": {
         "*.tcc": "cpp",
-        "memory_resource": "cpp"
+        "memory_resource": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "random": "cpp",
+        "limits": "cpp"
     }
 }
