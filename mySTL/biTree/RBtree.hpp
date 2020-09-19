@@ -7,8 +7,12 @@
 // 任意一个结点到每个叶子节点的路径都包含数量相同的黑节点
 
 
+// 红黑树不是严格的AVL树，AVL树中任何节点的两个子树的高度最大差别为1
+// 而红黑树的1~6性质保证了其最长路径不多于最短路径长度的两倍
+
+
 // https://segmentfault.com/a/1190000012728513
-// https://developer.51cto.com/art/201908/601688.html
+// https://developer.51cto.com/art/201908/601688.htm
 // https://www.cnblogs.com/skywang12345/p/3624291.html
 
 
@@ -190,6 +194,37 @@ void RBTree<T>::rightRotate(RBTNode<T>* &root, RBTNode<T> *y)// root使用引用
  *     root 红黑树的根结点
  *     node 插入的结点        // 对应《算法导论》中的node
  */
+
+/*
+    1. 红黑树是一个平衡二叉树
+    2. 每个节点不是黑色就是红色
+    3. 根节点是黑色
+    4. 每个叶子节点是黑色
+    5. 每个红色节点的两个子节点一定都是黑色->红色子节点的父节点一定是黑色
+    6. 任意一个结点到每个叶子节点的路径都包含数量相同的黑节点
+    
+    搜索树的插入操作永远是在叶子节点扩容
+
+
+    将结点插入到红黑树中，首先将红黑树当做一个搜索二叉树进行插入操作，即此时只是插入操作，并不进行旋转和变色操作
+    
+    当插入后的结点N其父节点为黑色时，满足2,3,5,6
+
+    当插入后的结点N其父节点P为红色时,P的父节点G一定是黑色(如果G为红色，则根据5，P应该为黑色)
+    在上述情况下：当G的另一个子节点U，即N的叔结点为红色时，条件5不满足
+    由于N结点是红色，而其父节点P也是红色，因此P原来的子树不需要做任何变化
+    结点P因条件5必须变为黑色，由于新增了一个黑色结点，根据条件6，叔结点U(如果存在)需要变为黑色
+    而结点G需要变为红色，若G为黑色则，G的父节点的左右子树其黑色结点数量不同，因此G需要变为红色，
+    G的父节点需要变为黑色，这个P节点从红色变为黑色的情况相同，因此需要递归向上排列
+
+    当插入的节点N其父节点P为红色，叔节点为黑色，N是P的左孩子，且结点P是G的左孩子，此时对G进行右旋，调整P
+    和G的位置，并互换颜色，此时为一个红黑树
+
+    当插入的结点N其父节点P为红色，叔结点为黑色，N是P的右孩子，且结点P是G的左孩子，此时以P结点为根节点进行左旋，
+    此时就变为上面的一种情况
+
+*/
+
 template <class T>
 void RBTree<T>::insert(RBTNode<T>* &root, RBTNode<T>* node)
 {
@@ -216,7 +251,7 @@ void RBTree<T>::insert(RBTNode<T>* &root, RBTNode<T>* node)
         y->right = node;
         
     }
-    else
+    else // root是空节点
     {
         root = node;
     }
@@ -277,7 +312,7 @@ void RBTree<T>::insertFixUp(RBTNode<T>* &root, RBTNode<T>* node)
                     rb_set_black(parent);
                     rb_set_red(gparent);
                     node = gparent;
-                    continue;
+                    continue;//跳过下面的判断，进行上面的while循环判断
                 }
             }
 
