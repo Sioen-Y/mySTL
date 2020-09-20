@@ -56,8 +56,8 @@ namespace detail {
 		__hashtable_iterator(node_type* _cur, HashTable* _htb) : cur(_cur), htb(_htb) { }
 		__hashtable_iterator(const self& rhs) : cur(rhs.cur), htb(rhs.htb) { }
 
-		reference operator*() const { return cur->val; }
-		pointer operator->() const { return &(operator*()); }
+		reference operator*() const { return cur->val; } // __hashtable_iterator example; *example;
+		pointer operator->() const { return &(operator*()); }// __hashtable_iterator *example; example->...;
 
 		iterator& operator++() {	//前置++
 			const node_type* old = cur;
@@ -68,7 +68,7 @@ namespace detail {
 				size_type bucket = htb->bucket_num(old->val);	//找出当前元素所在的桶
 
 				/* 寻找当前桶之后第一个存在元素的桶，其第一个元素即为所求 */
-				while (++bucket < htb->buckets.size()) {
+				while (++bucket < htb->buckets.size()) { // buckets是hashtable的成员变量，且是vector类型
 					if (htb->buckets[bucket] != nullptr) {
 						cur = htb->buckets[bucket];
 						break;
