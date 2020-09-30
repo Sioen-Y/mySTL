@@ -334,11 +334,11 @@ namespace detail {		//这一级namespace下是stl下内部实现细节
 			half = (len >> 1);		//通过移位实现除2
 			mid = first + half;		//注意：随机指针才能这样移动
 
-			if (comp(*mid, value)) {
+			if (comp(*mid, value)) {// *mid > value
 				first = mid + 1;
 				len = len - half - 1;
 			}
-			else {
+			else {// *mid < value
 				len = half;
 			}
 		}

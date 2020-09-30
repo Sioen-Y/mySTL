@@ -1,3 +1,5 @@
+// https://www.cnblogs.com/jinxiang1224/p/8468417.html
+
 /*
  *deque的实现，其内实现为分段连续的存储空间
  *
@@ -21,7 +23,8 @@ namespace detail {
  * 	 如果 val_size(sizeof(value_type))小于512，返回 512 / val_size，一个缓冲区可容纳 512 / val_size 个元素
  * 	 如果 val_size >= 512，返回 1，一个缓冲区可容纳 1 个元素
  */
-inline size_t __deque_buf_size(size_t buf_size, size_t val_size) {
+// 当存放的数据元素占用的空间大于等于512则返回1
+inline size_t __deque_buf_size(size_t buf_size, size_t val_size) {// __deque_buf_size(0,sizeof(value_type))
 	return (buf_size != 0) ? buf_size
 			: ( (val_size < 512) ? size_t(512 / val_size) : size_t(1) );
 }
@@ -45,17 +48,18 @@ inline size_t __deque_buf_size(size_t buf_size, size_t val_size) {
 		typedef ptrdiff_t					difference_type;
 
 		typedef size_t						size_type;
-		typedef T**							map_pointer;
+		typedef T**							map_pointer; // map_pointer是map的地址，map_pointer中存放着各个缓冲区头结点地址，即map_pointer[i]类型为T*
 		typedef __deque_iterator			self;
 
 		//保持与容器的联结
 		T* cur;				//指向 [first,last) 所指缓冲区行中的一个元素，表示当前迭代器所指元素
-		T* first;			//指向缓冲区行的头
-		T* last;			//指向缓冲区行的尾，永远指向最后一个元素的下一位置
+		T* first;			//指向缓冲区行的头，指向正在被使用的缓冲区的头
+		T* last;			//指向缓冲区行的尾，永远指向最后一个元素的下一位置，指向正在被使用的缓冲区的尾
 		map_pointer node;	//指向中控器中当前迭代器所指节点
 
 		// 以下是迭代器运算的一些关键行为 
 		/* 使 node 跳跃到新的缓冲区 new_node */
+		// 每个缓冲区是顺序存放，每个缓冲区大小都相同
 		void set_node(map_pointer new_node) {
 			node = new_node;
 			first = *new_node;
@@ -83,7 +87,7 @@ inline size_t __deque_buf_size(size_t buf_size, size_t val_size) {
 			}
 			return *this;
 		}
-		/* 后置++，返回自加前的 this 的拷贝 */
+		/* 后置++，返回自加前的 this 的拷贝 *，返回的是copy因此不能使用引用/
 		self operator++(int) {
 			self tmp = *this;
 			++*this;		//调用前置++
@@ -166,13 +170,13 @@ inline size_t __deque_buf_size(size_t buf_size, size_t val_size) {
 		typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::size_type			size_type;
 		typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::difference_type		difference_type;
 		
-		size_t (*buffer_size)() = detail::__deque_iterator<T, T&, T*, BufSize>::buffer_size;
+		size_t (*buffer_size)() = detail::__deque_iterator<T, T&, T*, BufSize>::buffer_size;//函数指针
 
 	protected:
 		typedef T** map_pointer;
 
-		iterator start;			//指向第一个缓冲区节点
-		iterator finish;		//指向最后一个缓冲区节点
+		iterator start;			//指向第一个缓冲区节点,比如一共有四个缓冲区，每个缓冲区长度为8个int型，start迭代器中的first和last是第一个缓冲区的头结点和尾结点
+		iterator finish;		//指向最后一个缓冲区节点,比如一共有四个缓冲区，每个缓冲区长度为8个int型，finish迭代器中的first和last是第四个缓冲区的头结点和尾结点
 		map_pointer map;		//指向中控器map，map是连续空间，其每个元素都指向某行缓冲区（缓冲区连续）
 		size_type map_size;		//map 总共课容纳缓冲区的个数
 
@@ -197,7 +201,7 @@ inline size_t __deque_buf_size(size_t buf_size, size_t val_size) {
 		void push_back_aux(const value_type& t);
 		//push_back_aux() 内调函数
 		void reserve_map_at_back(size_type nodes_to_add = 1) {
-			if (nodes_to_add + 1 > map_size - (finish.node - map)) {
+			if (nodes_to_add + 1 > map_size - (finish.node - map)) {// map_size - (finish.node - map)剩余map空间
 				//如果 map 尾端节点的备用空间不足
 				//则必须更换一个更大的map（配置更大的、拷贝原来的、释放原来的）
 				reallocate_map(nodes_to_add, false);
@@ -345,7 +349,8 @@ inline size_t __deque_buf_size(size_t buf_size, size_t val_size) {
 	template<class T, class Alloc, size_t BufSize>
 	void deque<T, Alloc, BufSize>::create_map_and_nodes(size_type num_elements) {
 		//需要节点数 = (元素个数 / 缓冲区大小可容纳元素个数) + 1，如果刚好整除会多配一个节点设为last
-		size_type num_nodes = num_elements / buffer_size() + 1;
+		// num_nodes是缓冲区个数+1
+		size_type num_nodes = num_elements / buffer_size() + 1;// buffer_size是一个函数指针，buffer_size()返回 512/sizeof(T),假设一个缓冲区为512个字节，则一个缓冲区可以存放512/sizeof(T)个元素
 
 		//一个map最少管理3个节点，最多管理所需节点数+2，前后各留一个便于扩展
 		map_size = num_nodes + 2;

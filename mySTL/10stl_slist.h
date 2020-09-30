@@ -38,7 +38,7 @@ namespace detail {
 		__slist_iterator_base(__slist_node_base* x) : node(x) { }
 
 		void incr() { node = node->next; }		//前进一个节点
-		bool operator==(const __slist_iterator_base& x) const {
+		bool operator==(const __slist_iterator_base& x) const {//迭代器的==操作就是比较迭代器中的node是否相同，node是指针，即比较节点地址是否相同
 			return node == x.node;
 		}
 		bool operator!=(const __slist_iterator_base& x) const {
@@ -47,7 +47,7 @@ namespace detail {
 	};
 	//单向链表的迭代器结构
 	template<class T, class Ref = T&, class Ptr = T*>
-	struct __slist_iterator : __slist_iterator_base {
+	struct __slist_iterator : __slist_iterator_base {// struct的继承都是public继承
 		typedef forward_iterator_tag						iterator_category;
 		typedef T											value_type;
 		typedef size_t										size_type;
@@ -171,7 +171,7 @@ namespace detail {
 		size_type size() const { return detail::__slist_size(dummyHead.next); }
 
 		void push_front(const value_type& x) {
-			detail::__slist_make_link(&dummyHead, create_node(x));
+			detail::__slist_make_link(&dummyHead, create_node(x));//头插法
 		}
 		void pop_front() {
 			slist_node* node = (slist_node*)dummyHead.next;

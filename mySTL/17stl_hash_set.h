@@ -45,8 +45,8 @@ namespace lfp {
 		EqualKey key_eq() const { return htb.equals(); }
 
 	public:
-		hash_set() : htb(50, HashFunc(), EqualKey()) { }		//缺省使用表格大小为50
-		explicit hash_set(size_type n) : htb(n, HashFunc(), EqualKey()) { }
+		hash_set() : htb(50, HashFunc(), EqualKey()) { }		//缺省使用表格大小为50，寻找大于50的最小质数
+		explicit hash_set(size_type n) : htb(n, HashFunc(), EqualKey()) { }//防止隐式转换，比如hash_set map = 50，需要使用hash_set map(50); 
 		hash_set(size_type n, const HashFunc& hf) : htb(n, hf, EqualKey()) { }
 		hash_set(size_type n, const HashFunc& hf, const EqualKey& eql) : htb(n, hf, eql) { }
 

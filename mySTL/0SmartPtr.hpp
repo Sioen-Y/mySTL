@@ -5,7 +5,7 @@ class SmartPtr{
 	public:
 	int count;
 	int *p;
-	SmartPtr():count(1),p(new int()){} //heap¶ÑÉÏÉêÇëÒ»¿éintÄÚ´æµ¥Ôª
+	SmartPtr():count(1),p(new int()){} //heapä¸Šç”³è¯·ä¸€å—intå†…å­˜å•å…ƒ
 	~SmartPtr(){
 		printf("%d smart_ptr deleted\n", *p);
 		delete p;
@@ -15,13 +15,13 @@ class SmartPtr{
 class Ptr{
 	public:
 	SmartPtr *sp;
-	Ptr():sp(new SmartPtr()) {} // Ä¬ÈÏ¹¹Ôìº¯Êı
+	Ptr():sp(new SmartPtr()) {} // é»˜è®¤æ„é€ å‡½æ•°
 	Ptr(const Ptr& other):sp(other.sp){
 		sp->count++;
 	}
 	
-	Ptr operator=(const Ptr& other){ // ¸³Öµ²Ù×÷·û½«otherºÍ±¾PtrµÄspÉèÖÃÎªÍ¬Ò»¸ö£¬¼´Ptr p1; Ptr p2; p1=p2; ´ËÊ±p1ºÍp2µÄSmartPtrÊÇÍ¬Ò»¿éÄÚ´æµ¥Ôª
-		sp = other.sp;				 // ÓÖÓÉÓÚSmartPtr¿ªÔÚheapÉÏ£¬¼´Ê¹Ä³¸öÁÙÊ±±äÁ¿p1±»ÊÕ»ØËüµÄSmarkPtr»¹ÔÚ£¬
+	Ptr operator=(const Ptr& other){ // èµ‹å€¼æ“ä½œç¬¦å°†otherå’Œæœ¬Ptrçš„spè®¾ç½®ä¸ºåŒä¸€ä¸ªï¼Œå³Ptr p1;Ptr p2;p1 = p2;æ­¤æ—¶p1å’Œp2çš„SmartPtræ˜¯åŒä¸€å—å†…å­˜å•å…ƒ
+		sp = other.sp;				 // åˆç”±äºSmartptrå¼€åœ¨heapä¸Šï¼Œå³ä½¿æŸä¸ªä¸´æ—¶å˜é‡p1è¢«æ”¶å›ï¼Œå®ƒçš„Smartptrè¿˜åœ¨
 		sp->count++;
 		return *this;
 	}

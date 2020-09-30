@@ -62,8 +62,10 @@ namespace detail {
 	}
 
 	//以下是destroy第二版本针对迭代器为char*和wchar_t*的特化版（他们什么也不用做）
+	//有需要可以添加int类型特化版本，针对hashmash的destory操作
 	inline void destroy(char*, char*) { }
 	inline void destroy(wchar_t*, wchar_t*) { }
+	inline void destroy(int*){ }
 
 }// end of namespace lfp
 
