@@ -193,7 +193,7 @@ namespace detail {
 
 /* RB_tree 结构的定义 */
 	/* Key:			rb_tree键值型别 */
-	/* Value:		rb_tree实际存储的元素型别，通过对应键值的出排列顺序 */
+	/* Value:		rb_tree实际存储的元素型别，通过对应键值得出排列顺序 */
 	/* KeyOfValue:	键值提取方法，得出某个元素实值所对应的键值 */
 	/* Compare:		键值比较规则 */
 	template<class Key, class Value, class KeyOfValue, class Compare, class Alloc = alloc>

@@ -37,6 +37,7 @@ namespace detail {
 	}
 
 /* 下溯程序 */
+/*	Compare参数有两种参数，一种是greater（生成小顶堆），一种是less（生成大顶堆）*/
 	template<class RandomAccessIterator, class Distance, class T, class Compare>
 	void percolate_down(RandomAccessIterator first,		// 底部容器的起始位置
 						Distance holeIndex,				// 洞号（即需要下溯的位置与first的距离）

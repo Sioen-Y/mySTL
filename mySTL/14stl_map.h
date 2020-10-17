@@ -18,6 +18,7 @@
 namespace lfp {
 
 	//以下Key为键值型别，T为实值型别，省缺使用递增排序(less)
+	// std::less<Key>是struct
 	template<class Key, class T, class Compare = std::less<Key>, class Alloc = alloc>
 	class map {
 	public:
@@ -34,10 +35,11 @@ namespace lfp {
 			friend class map<Key, T, Alloc>;
 
 			Compare comp;
+			// 有参构造函数
 			value_compare(Compare c) : comp(c) { }
 		public:
 			bool operator()(const value_type& x, const value_type& y) const {
-				return comp(x.first, y.first);
+				return comp(x.first, y.first);//比较pair<key,T>的key，comp默认是std::less<Key>,其operator()是比小
 			}
 		};
 	private:
@@ -57,7 +59,7 @@ namespace lfp {
 		typedef typename rep_type::difference_type		difference_type;
 		//typedef typename rep_type::reverse_iterator	reverse_iterator;
 
-		map() : t(Compare()) { }
+		map() : t(Compare()) { }// map内含rbtree为成员变量，rbtree其中有个构造函数是使用compare构造
 		explicit map(const Compare& comp) : t(comp) { }
 		template<class InputIterator>
 		map(InputIterator first, InputIterator last) : t(Compare()) {

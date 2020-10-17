@@ -15,6 +15,7 @@
 namespace lfp {
 
 	//默认使用less，即大根堆
+	// Compare为greater使用小根堆
 	template<class T, class Container = vector<T>, class Compare = less<T>>
 	class priority_queue {
 	public:
