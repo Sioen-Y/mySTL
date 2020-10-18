@@ -26,18 +26,20 @@ int partition(int arr[], int start, int end)
 	{
 		// keep moving till the left element is smaller than pivot
 		while (arr[i]<pivot)
-			i++;
-		 
+			++i;
 		// keep moving left till right element is larger
-		while (arr[j]>pivot)
-			j--;
-
+		while (arr[j]>pivot){
+            if(j==0)
+            break;
+            --j;
+        }
+		  
 		// we need to swap the left and right
 		if (i <= j)
 		{
 			swap(&arr[i], &arr[j]);
-			i++;
-			j--;
+			++i;
+			--j;
 		}
 	}
 
