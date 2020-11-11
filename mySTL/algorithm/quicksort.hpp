@@ -35,12 +35,15 @@ int partition(int arr[], int start, int end)
         }
 		  
 		// we need to swap the left and right
-		if (i <= j)
+		if (i <  j)
 		{
 			swap(&arr[i], &arr[j]);
 			++i;
 			--j;
 		}
+
+        if(i==j)// i==j说明vct[i] == vct[j] ==pivot
+        break;
 	}
 
 	// once partitioned, we need to put the pivot at correct place
