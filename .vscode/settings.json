@@ -38,6 +38,12 @@
         "new": "cpp",
         "ostream": "cpp",
         "stdexcept": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "queue": "cpp",
+        "array": "cpp",
+        "list": "cpp",
+        "functional": "cpp",
+        "istream": "cpp",
+        "streambuf": "cpp"
     }
 }
